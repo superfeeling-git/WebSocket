@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "My.WebSocketServer", "My.WebSocketServer\My.WebSocketServer.csproj", "{660465AF-DB77-4BE1-AA57-2C21A7159F1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "My.WebSocketServer", "My.WebSocketServer\My.WebSocketServer.csproj", "{660465AF-DB77-4BE1-AA57-2C21A7159F1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "My.WebSocket.Client", "My.WebSocket.Client\My.WebSocket.Client.csproj", "{146AC69C-4F49-4A15-9E14-FC376C96EE2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "My.WebSocket.Client", "My.WebSocket.Client\My.WebSocket.Client.csproj", "{146AC69C-4F49-4A15-9E14-FC376C96EE2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRChat", "SignalRChat\SignalRChat.csproj", "{B16E9E91-F038-41C5-A149-67DF402354DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{146AC69C-4F49-4A15-9E14-FC376C96EE2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{146AC69C-4F49-4A15-9E14-FC376C96EE2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{146AC69C-4F49-4A15-9E14-FC376C96EE2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B16E9E91-F038-41C5-A149-67DF402354DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B16E9E91-F038-41C5-A149-67DF402354DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B16E9E91-F038-41C5-A149-67DF402354DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B16E9E91-F038-41C5-A149-67DF402354DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
