@@ -14,6 +14,7 @@
             var webSocket;
             initWebSocket();
 
+            //确认当前用户身份，与服务端建立连接
             $("#from").change(function(e){
                 webSocket.send(`conn:${$(this).val()}`);
             })

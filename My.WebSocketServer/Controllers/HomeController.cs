@@ -26,20 +26,26 @@ namespace My.WebSocketServer.Controllers
         [HttpGet("/chat")]
         public async Task<IActionResult> chat()
         {
+            //确认是否WebSocket请求
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
+                //接受请求并返回websocket对象
                 var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+
+                var code = webSocket.GetHashCode();
 
                 //声明缓冲区
                 var buffer = new byte[1024 * 4];
 
                 while (webSocket.State == WebSocketState.Open)
                 {
+                    //接收到客户端的消息
                     var incoming = await webSocket.ReceiveAsync(buffer, CancellationToken.None);
                     if (incoming != null)
                     {
                         var result = Encoding.UTF8.GetString(buffer, 0, incoming.Count);
 
+                        //如果客户端消息是标识用户身份的，则通过字典给当前socket对象命名
                         if (result.StartsWith("conn:"))
                         {
                             string client = result.Split("conn:")[1];
@@ -48,6 +54,7 @@ namespace My.WebSocketServer.Controllers
                                 sockets.Add(client, webSocket);
                             }                            
                         }
+                        //如果是正常消息，则从消息中取出发送者和接收者，并从字典中取出数据用于发送
                         else
                         { 
                             var parse = result.Split("<custom_separator>");
@@ -57,6 +64,7 @@ namespace My.WebSocketServer.Controllers
                             { 
                                 data = parse[1];
                             }
+
                             string from = parse[2];
 
                             if (sockets.ContainsKey(to))
@@ -78,32 +86,5 @@ namespace My.WebSocketServer.Controllers
             }
             return Ok();
         }
-    }
-
-    public class WebSocketCollection
-    {
-        private List<WebSocketClient> WebSockets = new List<WebSocketClient>();
-
-        /// <summary>
-        /// 添加WebSocket
-        /// </summary>
-        /// <param name="webSocket"></param>
-        /// <returns></returns>
-        public WebSocketClient Add(WebSocketClient webSocket)
-        {
-            WebSockets.Add(webSocket);
-            return webSocket;
-        }
-
-        public List<WebSocketClient> GetAll()
-        {
-            return WebSockets;
-        }
-    }
-
-    public class WebSocketClient
-    {
-        public WebSocket WebSocket { get; set; }
-        public string Client { get; set; } = Guid.NewGuid().ToString();
     }
 }
