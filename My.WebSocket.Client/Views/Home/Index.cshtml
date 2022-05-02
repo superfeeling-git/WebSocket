@@ -1,0 +1,84 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript">
+        $(()=>{
+            var webSocket;
+            initWebSocket();
+
+            $("#from").change(function(e){
+                webSocket.send(`conn:${$(this).val()}`);
+            })
+
+            $("button#send").click(function(e){
+                sendData($("#to").val(),$("#content").val(),$("#from").val())
+            })
+
+             //w:向谁发，d 发送内容,f 谁发的
+            function sendData(w, d, f) {
+                initWebSocket();
+                if (webSocket.OPEN && webSocket.readyState == 1) {
+                    var s = "<custom_separator>";
+                    webSocket.send(w + s + d + s + f);
+                }
+                if (webSocket.readyState == 2 || webSocket.readyState == 3) {
+                    $("#div_receive").append("WebSocket closed");
+                }
+            }
+            function initWebSocket() {
+                var url = "ws://localhost:5010/chat";
+                if (!webSocket) {
+                    webSocket = new WebSocket(url);
+                    //Open connection  handler.
+                    webSocket.onopen = function () {
+                        $("#div_receive").append("WebSocket opened" + "<br>");
+
+                    };
+
+                    //Message data handler.
+                    webSocket.onmessage = function (e) {
+                        $("#div_receive").append(e.data + "<br>");
+                    };
+
+                    //Close event handler.
+                    webSocket.onclose = function () {
+                        $("#div_receive").append("WebSocket closed." + "<br>");
+                    };
+
+                    //Error event handler.
+                    webSocket.onerror = function (e) {
+                        $("#div_receive").append(e.message + "<br>");
+                    }
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="div_receive"></div>
+    <div>
+        <textarea id="content"></textarea>
+    </div>
+    <select id="from">
+        <option value="">请选择</option>
+        <option value="zs">张三</option>
+        <option value="ls">李四</option>
+        <option value="ww">王五</option>
+    </select>
+    <select id="to">
+        <option value="">请选择</option>
+        <option value="zs">张三</option>
+        <option value="ls">李四</option>
+        <option value="ww">王五</option>
+    </select>
+    <button type="button" id="send">发送</button>
+</body>
+</html>
