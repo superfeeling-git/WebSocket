@@ -10,57 +10,27 @@
     <title>Index</title>
     <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
     <script type="text/javascript">
-        $(()=>{
-            var webSocket;
-            initWebSocket();
+        var url = "ws://localhost:5010/chat";
+        webSocket = new WebSocket(url);
+            //Open connection  handler.
+            webSocket.onopen = function () {
+                $("#div_receive").append("WebSocket opened" + "<br>");
+            };
 
-            //确认当前用户身份，与服务端建立连接
-            $("#from").change(function(e){
-                webSocket.send(`conn:${$(this).val()}`);
-            })
+            //Message data handler.
+            webSocket.onmessage = function (e) {
+                $("#div_receive").append(e.data + "<br>");
+            };
 
-            $("button#send").click(function(e){
-                sendData($("#to").val(),$("#content").val(),$("#from").val())
-            })
+            //Close event handler.
+            webSocket.onclose = function () {
+                $("#div_receive").append("WebSocket closed." + "<br>");
+            };
 
-             //w:向谁发，d 发送内容,f 谁发的
-            function sendData(w, d, f) {
-                initWebSocket();
-                if (webSocket.OPEN && webSocket.readyState == 1) {
-                    var s = "<custom_separator>";
-                    webSocket.send(w + s + d + s + f);
-                }
-                if (webSocket.readyState == 2 || webSocket.readyState == 3) {
-                    $("#div_receive").append("WebSocket closed");
-                }
+            //Error event handler.
+            webSocket.onerror = function (e) {
+                $("#div_receive").append(e.message + "<br>");
             }
-            function initWebSocket() {
-                var url = "ws://localhost:5010/chat";
-                if (!webSocket) {
-                    webSocket = new WebSocket(url);
-                    //Open connection  handler.
-                    webSocket.onopen = function () {
-                        $("#div_receive").append("WebSocket opened" + "<br>");
-
-                    };
-
-                    //Message data handler.
-                    webSocket.onmessage = function (e) {
-                        $("#div_receive").append(e.data + "<br>");
-                    };
-
-                    //Close event handler.
-                    webSocket.onclose = function () {
-                        $("#div_receive").append("WebSocket closed." + "<br>");
-                    };
-
-                    //Error event handler.
-                    webSocket.onerror = function (e) {
-                        $("#div_receive").append(e.message + "<br>");
-                    }
-                }
-            }
-        });
     </script>
 </head>
 <body>
