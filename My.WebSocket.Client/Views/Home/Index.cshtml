@@ -19,7 +19,8 @@
 
             $("#send").click(function(){
                 if(webSocket.readyState == 1){
-                    webSocket.send($("#content").val());
+                    var s = "<custom_separator>";
+                    webSocket.send($("#to").val() + s + $("#content").val() + s + val);
                 }
             })
 
