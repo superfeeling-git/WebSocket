@@ -32,10 +32,16 @@ namespace My.WebSocketServer.Controllers
                 //接受请求并返回websocket对象
                 var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
 
-                var code = webSocket.GetHashCode();
-
                 //声明缓冲区
                 var buffer = new byte[1024 * 4];
+
+                //初始连接
+                var initialConnection = await webSocket.ReceiveAsync(buffer, CancellationToken.None);
+                var userIdentity = Encoding.UTF8.GetString(buffer, 0, initialConnection.Count);
+                if (!sockets.ContainsKey(userIdentity))
+                {
+                    sockets.Add(userIdentity, webSocket);
+                }
 
                 while (webSocket.State == WebSocketState.Open)
                 {
@@ -45,37 +51,24 @@ namespace My.WebSocketServer.Controllers
                     {
                         var result = Encoding.UTF8.GetString(buffer, 0, incoming.Count);
 
-                        //如果客户端消息是标识用户身份的，则通过字典给当前socket对象命名
-                        if (result.StartsWith("conn:"))
+                        var parse = result.Split("<custom_separator>");
+                        string to = parse[0];
+                        string data = string.Empty;
+                        if (!string.IsNullOrEmpty(parse[1]))
                         {
-                            string client = result.Split("conn:")[1];
-                            if (!sockets.ContainsKey(client))
-                            {
-                                sockets.Add(client, webSocket);
-                            }                            
+                            data = parse[1];
                         }
-                        //如果是正常消息，则从消息中取出发送者和接收者，并从字典中取出数据用于发送
-                        else
-                        { 
-                            var parse = result.Split("<custom_separator>");
-                            string to = parse[0];
-                            string data = string.Empty;
-                            if (!string.IsNullOrEmpty(parse[1]))
-                            { 
-                                data = parse[1];
-                            }
 
-                            string from = parse[2];
+                        string from = parse[2];
 
-                            if (sockets.ContainsKey(to))
-                            {
-                                await sockets[to].SendAsync(
-                                    new ArraySegment<byte>(Encoding.UTF8.GetBytes(data)),
-                                    WebSocketMessageType.Text,
-                                    true,
-                                    CancellationToken.None
-                                );
-                            }
+                        if (sockets.ContainsKey(to))
+                        {
+                            await sockets[to].SendAsync(
+                                new ArraySegment<byte>(Encoding.UTF8.GetBytes(data)),
+                                WebSocketMessageType.Text,
+                                true,
+                                CancellationToken.None
+                            );
                         }
                     }
                 }

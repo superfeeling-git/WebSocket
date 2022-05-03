@@ -10,10 +10,22 @@
     <title>Index</title>
     <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
     <script type="text/javascript">
-        var url = "ws://localhost:5010/chat";
-        webSocket = new WebSocket(url);
+        $(()=>{
+            var url = "ws://localhost:5010/chat";
+            webSocket = new WebSocket(url);
+            var id = window.location.search.replace("?","");
+
+            var val = $("#from option:eq("+id+")").val();
+
+            $("#send").click(function(){
+                if(webSocket.readyState == 1){
+                    webSocket.send($("#content").val());
+                }
+            })
+
             //Open connection  handler.
             webSocket.onopen = function () {
+                webSocket.send(val);
                 $("#div_receive").append("WebSocket opened" + "<br>");
             };
 
@@ -31,6 +43,7 @@
             webSocket.onerror = function (e) {
                 $("#div_receive").append(e.message + "<br>");
             }
+        });
     </script>
 </head>
 <body>
